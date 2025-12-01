@@ -8,38 +8,31 @@
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; padding: 20px; }
         .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
         
-        /* --- STYLE BARU: HEADER PENERBIT --- */
         .publisher-header { text-align: center; border-bottom: 4px solid #007bff; padding-bottom: 20px; margin-bottom: 30px; }
         .publisher-name { margin: 0; font-size: 2.5em; color: #2c3e50; text-transform: uppercase; letter-spacing: 2px; font-weight: 800; }
         .form-title { margin: 10px 0 0 0; color: #666; font-weight: normal; font-size: 1.2em; }
 
-        /* Style Form Pemesan */
         .customer-form { background-color: #f8f9fa; padding: 25px; border-radius: 8px; border: 1px solid #e9ecef; margin-bottom: 30px; }
         .customer-form h3 { margin-top: 0; color: #007bff; font-size: 1.1em; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; }
         
         .form-row { display: flex; gap: 15px; margin-bottom: 15px; }
-        .form-group { flex: 1; } /* Agar input membagi rata */
+        .form-group { flex: 1; }
         .form-group label { display: block; font-weight: bold; margin-bottom: 8px; color: #495057; font-size: 0.9em; }
-        .form-group input { width: 100%; padding: 12px; border: 1px solid #ced4da; border-radius: 5px; box-sizing: border-box; transition: border-color 0.3s; }
-        .form-group input:focus { border-color: #007bff; outline: none; }
+        .form-group input { width: 100%; padding: 12px; border: 1px solid #ced4da; border-radius: 5px; box-sizing: border-box; }
 
-        /* Style Tabel */
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         th, td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
         th { background-color: #007bff; color: white; text-transform: uppercase; font-size: 0.85em; letter-spacing: 1px; }
-        tr:hover { background-color: #f1f1f1; }
         
-        .category-row { background-color: #e9ecef; font-weight: bold; color: #495057; text-transform: uppercase; font-size: 0.85em; letter-spacing: 1px; padding-top: 20px; }
-        .category-cell { padding-top: 25px; padding-bottom: 10px; border-bottom: 2px solid #ccc; }
+        .category-cell { padding-top: 25px; padding-bottom: 10px; border-bottom: 2px solid #ccc; font-weight: bold; color: #333; }
 
         input[type="number"] { width: 70px; padding: 8px; text-align: center; border: 1px solid #ced4da; border-radius: 5px; font-weight: bold; color: #333; }
         
         .grand-total-row { font-weight: bold; font-size: 1.2em; background-color: #343a40; color: #fff; }
         .grand-total-val { color: #2ecc71; font-size: 1.3em; text-align: right; }
         
-        .btn-checkout { display: block; width: 100%; padding: 18px; background: #28a745; color: white; border: none; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.1s, background 0.3s; }
-        .btn-checkout:hover { background: #218838; transform: translateY(-2px); }
-        .btn-checkout:active { transform: translateY(0); }
+        .btn-checkout { display: block; width: 100%; padding: 18px; background: #25D366; color: white; border: none; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.1s, background 0.3s; }
+        .btn-checkout:hover { background: #128C7E; transform: translateY(-2px); }
     </style>
 </head>
 <body>
@@ -89,33 +82,66 @@
         </tfoot>
     </table>
 
-    <button class="btn-checkout" onclick="prosesPesanan()">Proses Pesanan</button>
+    <button type="button" class="btn-checkout" onclick="kirimWhatsApp()">
+        <span style="margin-right: 10px;">📱</span> Kirim Pesanan via WhatsApp
+    </button>
 </div>
 
 <script>
     // --- DATABASE BUKU ---
+    // Pastikan nomor ini benar (Tanpa tanda + atau spasi)
+    const adminPhone = "6281374995137"; 
+
     const library = [
         {
             category: "Buku Sekolah Dasar",
             items: [
-                { id: 1, title: "SENI CPO 46", price: 103000 },
-                { id: 2, title: "KODING CPO46 (Tipe A)", price: 76000 },
-                { id: 3, title: "KODING CPO46 (Tipe B)", price: 115000 },
-                { id: 4, title: "TKA (TES KEMAMPUAN AKADEMIK) SD", price: 142000 }
+                { id: 1, title: "SENI Kls IV CPO 46", price: 103000 },
+                { id: 2, title: "KODING CPO46 Kls V (Tipe A)", price: 76000 },
+                { id: 3, title: "KODING CPO46 Kls VI(Tipe B)", price: 115000 },
+                { id: 4, title: "TKA (TES KEMAMPUAN AKADEMIK) Kls VI SD", price: 142000 }
             ]
         },
         {
             category: "Buku Lanjutan / SMP",
             items: [
-                { id: 5, title: "KODING CPO46 (Lanjutan)", price: 94000 },
-                { id: 6, title: "TKA (TES KEMAMPUAN AKADEMIK) VII", price: 132000 },
-                { id: 7, title: "BUKUPAS / POKOK MTK", price: 85000 },
-                { id: 8, title: "BUKUPAS / POKOK B.INDONESIA", price: 85000 },
-                { id: 9, title: "BUKUPAS / POKOK IPA", price: 85000 },
-                { id: 10, title: "BUKUPAS / POKOK IPS", price: 85000 },
-                { id: 11, title: "BUKUPAS / POKOK B.INGGRIS", price: 85000 },
-                { id: 12, title: "BUKUPAS / POKOK PANCASILA", price: 68000 }
-            ]
+               { id: 1, title: "BAHASA INDONESIA CPO46 Kls VII (Lanjutan)", price: 109000 },
+               { id: 2, title: "BAHASA INGGRIS CP046 Kls VII", price: 109000 },
+               { id: 3, title: "BEL.BARENG MATEMATIKA Kls VII", price: 165000 },
+               { id: 4, title: "IPA CP046 Kls VII", price: 161000 },
+               { id: 5, title: "IPS CP046 Kls VII", price: 126000 },
+               { id: 6, title: "PEND.PANCASILA CP046 Kls VII", price: 77000 },
+               { id: 7, title: "PAI & BUDI PEKERTI CP046 Kls VII", price: 109000 },
+               { id: 8, title: "PAK & BUDI PEKERTI CP046 Kls VII", price: 89000 },
+               { id: 9, title: "PJOK CP046 Kls VII", price: 104000 },
+               { id: 10, title: "INFORMATIKA CP046 Kls VII", price: 88000 },
+               { id: 11, title: "SENI CP046 Kls VII", price: 85000 },
+               { id: 12, title: "KODING CPO46 Kls VII (Lanjutan)", price: 94000 },
+               { id: 13, title: "TKA (TES KEMAMPUAN AKADEMIK) Kls VII", price: 132000 },
+               { id: 14, title: "BUKUPAS MATEMATIKA Kls VII", price: 85000 },
+               { id: 15, title: "BUKUPAS B.INDONESIA Kls VII", price: 85000 },
+               { id: 16 , title: "BUKUPAS IPA Kls VII", price: 85000 },
+               { id: 17, title: "BUKUPAS IPS Kls VII", price: 85000 },
+               { id: 18, title: "BUKUPAS B.INGGRIS Kls VII", price: 85000 },
+               { id: 19, title: "BUKUPAS PANCASILA Kls VII", price: 68000 },
+               { id: 20, title: "BUKUPAS MATEMATIKA Kls VIII", price: 85000 },
+               { id: 21, title: "BUKUPAS B.INDONESIA Kls VIII", price: 85000 },
+               { id: 22, title: "BUKUPAS IPA Kls VIII", price: 85000 },
+               { id: 23, title: "BUKUPAS IPS Kls VIII", price: 85000 },
+               { id: 24, title: "BUKUPAS B.INGGRIS Kls VIII", price: 85000 },
+               { id: 25, title: "BUKUPAS PANCASILA Kls VIII", price: 68000 },
+               { id: 26, title: "BUKUPAS MATEMATIKA Kls IX", price: 85000 },
+               { id: 27, title: "BUKUPAS B.INDONESIA Kls IX", price: 85000 },
+               { id: 28, title: "BUKUPAS IPA Kls IX", price: 85000 },
+               { id: 29, title: "BUKUPAS IPS Kls IX", price: 85000 },
+               { id: 30, title: "BUKUPAS B.INGGRIS Kls IX", price: 85000 },
+               { id: 31, title: "BUKUPAS PANCASILA Kls IX", price: 68000 },
+               
+                
+                
+                
+                
+             ]
         }
     ];
 
@@ -127,13 +153,7 @@
     let globalCounter = 1;
 
     library.forEach(group => {
-        const categoryHeader = `
-            <tr>
-                <td colspan="5" class="category-cell">
-                    <strong>${group.category}</strong>
-                </td>
-            </tr>`;
-        tableBody.innerHTML += categoryHeader;
+        tableBody.innerHTML += `<tr><td colspan="5" class="category-cell"><strong>${group.category}</strong></td></tr>`;
 
         group.items.forEach(book => {
             const row = `
@@ -142,7 +162,7 @@
                     <td>${book.title}</td>
                     <td>${formatRupiah(book.price)}</td>
                     <td style="text-align: center;">
-                        <input type="number" min="0" placeholder="0"
+                        <input type="number" id="qty-${book.id}" min="0" placeholder="0"
                                onchange="updateTotal(${book.id}, this.value, ${book.price})" 
                                onkeyup="updateTotal(${book.id}, this.value, ${book.price})">
                     </td>
@@ -172,33 +192,55 @@
         document.getElementById('grand-total').innerText = formatRupiah(total);
     }
 
-    function prosesPesanan() {
+    // --- PERBAIKAN FUNGSI WHATSAPP ---
+    function kirimWhatsApp() {
         const sekolah = document.getElementById('namaSekolah').value;
         const kecamatan = document.getElementById('kecamatan').value;
         const kota = document.getElementById('kabKota').value;
 
+        // Validasi
         if(sekolah === "" || kecamatan === "" || kota === "") {
-            alert("MOHON LENGKAPI DATA!\n\nNama Sekolah, Kecamatan, dan Kota wajib diisi.");
+            alert("MOHON MAAF: Data Sekolah, Kecamatan, dan Kota HARUS DIISI dulu ya.");
             return;
         }
-
         if(grandTotalVal === 0) {
             alert("Keranjang belanja masih kosong.");
             return;
         }
 
-        const pesan = `
-INVOICE - PENERBIT YRAMA WIDYA
---------------------------------
-Sekolah  : ${sekolah}
-Lokasi   : ${kecamatan}, ${kota}
---------------------------------
-TOTAL TAGIHAN: ${formatRupiah(grandTotalVal)}
+        // Susun Pesan
+        let message = `*HALO ADMIN YRAMA WIDYA, SAYA INGIN MEMESAN BUKU:*\n\n`;
+        message += `*DATA PEMESAN:*\n`;
+        message += `Sekolah : ${sekolah}\n`;
+        message += `Lokasi  : ${kecamatan}, ${kota}\n\n`;
+        message += `*DETAIL PESANAN:*\n`;
 
-Lanjutkan proses?`;
-        
-        if(confirm(pesan)) {
-            alert("Pesanan Diterima! Terima kasih telah menggunakan layanan Yrama Widya.");
+        let nomor = 1;
+        library.forEach(group => {
+            group.items.forEach(book => {
+                let qtyInput = document.getElementById(`qty-${book.id}`).value;
+                let qty = parseInt(qtyInput);
+                if(qty > 0) {
+                    let subtotal = qty * book.price;
+                    message += `${nomor}. ${book.title} (x${qty}) = ${formatRupiah(subtotal)}\n`;
+                    nomor++;
+                }
+            });
+        });
+
+        message += `\n----------------------------------\n`;
+        message += `*GRAND TOTAL: ${formatRupiah(grandTotalVal)}*`;
+        message += `\n----------------------------------\n`;
+        message += `Mohon segera diproses. Terima kasih.`;
+
+        // URL WhatsApp
+        const whatsappUrl = `https://api.whatsapp.com/send?phone=${adminPhone}&text=${encodeURIComponent(message)}`;
+
+        // DEBUG ALERT (Akan muncul pop up konfirmasi sebelum pindah aplikasi)
+        if(confirm("Pesanan sudah lengkap. Lanjut kirim ke WhatsApp?")) {
+            // METODE BARU: Menggunakan window.location.href
+            // Ini lebih ampuh untuk membuka aplikasi WA di HP dibanding window.open
+            window.location.href = whatsappUrl;
         }
     }
 </script>
