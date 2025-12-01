@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Buku - YRAMA WIDYA</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 40px; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        
+        /* --- STYLE BARU: HEADER PENERBIT --- */
+        .publisher-header { text-align: center; border-bottom: 4px solid #007bff; padding-bottom: 20px; margin-bottom: 30px; }
+        .publisher-name { margin: 0; font-size: 2.5em; color: #2c3e50; text-transform: uppercase; letter-spacing: 2px; font-weight: 800; }
+        .form-title { margin: 10px 0 0 0; color: #666; font-weight: normal; font-size: 1.2em; }
+
+        /* Style Form Pemesan */
+        .customer-form { background-color: #f8f9fa; padding: 25px; border-radius: 8px; border: 1px solid #e9ecef; margin-bottom: 30px; }
+        .customer-form h3 { margin-top: 0; color: #007bff; font-size: 1.1em; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; }
+        
+        .form-row { display: flex; gap: 15px; margin-bottom: 15px; }
+        .form-group { flex: 1; } /* Agar input membagi rata */
+        .form-group label { display: block; font-weight: bold; margin-bottom: 8px; color: #495057; font-size: 0.9em; }
+        .form-group input { width: 100%; padding: 12px; border: 1px solid #ced4da; border-radius: 5px; box-sizing: border-box; transition: border-color 0.3s; }
+        .form-group input:focus { border-color: #007bff; outline: none; }
+
+        /* Style Tabel */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background-color: #007bff; color: white; text-transform: uppercase; font-size: 0.85em; letter-spacing: 1px; }
+        tr:hover { background-color: #f1f1f1; }
+        
+        .category-row { background-color: #e9ecef; font-weight: bold; color: #495057; text-transform: uppercase; font-size: 0.85em; letter-spacing: 1px; padding-top: 20px; }
+        .category-cell { padding-top: 25px; padding-bottom: 10px; border-bottom: 2px solid #ccc; }
+
+        input[type="number"] { width: 70px; padding: 8px; text-align: center; border: 1px solid #ced4da; border-radius: 5px; font-weight: bold; color: #333; }
+        
+        .grand-total-row { font-weight: bold; font-size: 1.2em; background-color: #343a40; color: #fff; }
+        .grand-total-val { color: #2ecc71; font-size: 1.3em; text-align: right; }
+        
+        .btn-checkout { display: block; width: 100%; padding: 18px; background: #28a745; color: white; border: none; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.1s, background 0.3s; }
+        .btn-checkout:hover { background: #218838; transform: translateY(-2px); }
+        .btn-checkout:active { transform: translateY(0); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="publisher-header">
+        <h1 class="publisher-name">PENERBIT YRAMA WIDYA</h1>
+        <h2 class="form-title">Formulir Pemesanan Buku Sekolah</h2>
+    </div>
+
+    <div class="customer-form">
+        <h3>Data Sekolah Pemesan</h3>
+        <div class="form-group">
+            <label for="namaSekolah">Nama Sekolah:</label>
+            <input type="text" id="namaSekolah" placeholder="Masukkan nama sekolah lengkap...">
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="kecamatan">Kecamatan:</label>
+                <input type="text" id="kecamatan" placeholder="Kecamatan...">
+            </div>
+            <div class="form-group">
+                <label for="kabKota">Kabupaten / Kota:</label>
+                <input type="text" id="kabKota" placeholder="Kab/Kota...">
+            </div>
+        </div>
+    </div>
+    
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 5%;">No</th>
+                <th>Judul Buku & Item</th>
+                <th style="width: 20%;">Harga Satuan</th>
+                <th style="width: 10%; text-align: center;">Qty</th>
+                <th style="width: 20%; text-align: right;">Total</th>
+            </tr>
+        </thead>
+        <tbody id="book-list">
+            </tbody>
+        <tfoot>
+            <tr class="grand-total-row">
+                <td colspan="4" style="text-align: right; padding-right: 20px;">GRAND TOTAL:</td>
+                <td id="grand-total" class="grand-total-val">Rp 0</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <button class="btn-checkout" onclick="prosesPesanan()">Proses Pesanan</button>
+</div>
+
+<script>
+    // --- DATABASE BUKU ---
+    const library = [
+        {
+            category: "Buku Sekolah Dasar",
+            items: [
+                { id: 1, title: "SENI CPO 46", price: 103000 },
+                { id: 2, title: "KODING CPO46 (Tipe A)", price: 76000 },
+                { id: 3, title: "KODING CPO46 (Tipe B)", price: 115000 },
+                { id: 4, title: "TKA (TES KEMAMPUAN AKADEMIK) SD", price: 142000 }
+            ]
+        },
+        {
+            category: "Buku Lanjutan / SMP",
+            items: [
+                { id: 5, title: "KODING CPO46 (Lanjutan)", price: 94000 },
+                { id: 6, title: "TKA (TES KEMAMPUAN AKADEMIK) VII", price: 132000 },
+                { id: 7, title: "BUKUPAS / POKOK MTK", price: 85000 },
+                { id: 8, title: "BUKUPAS / POKOK B.INDONESIA", price: 85000 },
+                { id: 9, title: "BUKUPAS / POKOK IPA", price: 85000 },
+                { id: 10, title: "BUKUPAS / POKOK IPS", price: 85000 },
+                { id: 11, title: "BUKUPAS / POKOK B.INGGRIS", price: 85000 },
+                { id: 12, title: "BUKUPAS / POKOK PANCASILA", price: 68000 }
+            ]
+        }
+    ];
+
+    const formatRupiah = (number) => {
+        return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(number);
+    }
+
+    const tableBody = document.getElementById('book-list');
+    let globalCounter = 1;
+
+    library.forEach(group => {
+        const categoryHeader = `
+            <tr>
+                <td colspan="5" class="category-cell">
+                    <strong>${group.category}</strong>
+                </td>
+            </tr>`;
+        tableBody.innerHTML += categoryHeader;
+
+        group.items.forEach(book => {
+            const row = `
+                <tr>
+                    <td>${globalCounter++}</td>
+                    <td>${book.title}</td>
+                    <td>${formatRupiah(book.price)}</td>
+                    <td style="text-align: center;">
+                        <input type="number" min="0" placeholder="0"
+                               onchange="updateTotal(${book.id}, this.value, ${book.price})" 
+                               onkeyup="updateTotal(${book.id}, this.value, ${book.price})">
+                    </td>
+                    <td id="total-${book.id}" style="text-align: right;">Rp 0</td>
+                </tr>
+            `;
+            tableBody.innerHTML += row;
+        });
+    });
+
+    let cart = {}; 
+    let grandTotalVal = 0;
+
+    function updateTotal(id, qty, price) {
+        qty = parseInt(qty); 
+        if(isNaN(qty) || qty < 0) qty = 0; 
+        const subtotal = qty * price;
+        document.getElementById(`total-${id}`).innerText = formatRupiah(subtotal);
+        cart[id] = subtotal;
+        calculateGrandTotal();
+    }
+
+    function calculateGrandTotal() {
+        let total = 0;
+        for (let key in cart) { total += cart[key]; }
+        grandTotalVal = total;
+        document.getElementById('grand-total').innerText = formatRupiah(total);
+    }
+
+    function prosesPesanan() {
+        const sekolah = document.getElementById('namaSekolah').value;
+        const kecamatan = document.getElementById('kecamatan').value;
+        const kota = document.getElementById('kabKota').value;
+
+        if(sekolah === "" || kecamatan === "" || kota === "") {
+            alert("MOHON LENGKAPI DATA!\n\nNama Sekolah, Kecamatan, dan Kota wajib diisi.");
+            return;
+        }
+
+        if(grandTotalVal === 0) {
+            alert("Keranjang belanja masih kosong.");
+            return;
+        }
+
+        const pesan = `
+INVOICE - PENERBIT YRAMA WIDYA
+--------------------------------
+Sekolah  : ${sekolah}
+Lokasi   : ${kecamatan}, ${kota}
+--------------------------------
+TOTAL TAGIHAN: ${formatRupiah(grandTotalVal)}
+
+Lanjutkan proses?`;
+        
+        if(confirm(pesan)) {
+            alert("Pesanan Diterima! Terima kasih telah menggunakan layanan Yrama Widya.");
+        }
+    }
+</script>
+
+</body>
+</html>
